@@ -1,29 +1,31 @@
 library(plyr)
-library(xlsx)
 
 finalmatrix <- data.frame()
-file <- c(1,2,8,9,10,11,22,29,30,31,32,33,34,35,36,48,52,53,54,55,56,57,58,59,60,61,62,64,65,66) #--number of aphid observations for 2011
+file <- c(1,2,8,9,10,11,13,14,15,16,17,18,19,20,21,22,29,30,31,32,33,34,35,36,48,52,53,54,55,56,57,58,59,60,61,62,64,65,66) #--number of aphid observations for 2011
 for (l in file) {
+  
+  l <- paste("2012_", l, sep="")
 
 
 
 
 #--sets the workspace
-setwd("/nethome/erichs/Aphid 2012 csv results")
+#setwd("/nethome/erichs/Aphid 2012 csv results")
 
 #--reads in the csv file as a data frame
-xxx <- paste("Sweep12outcsv", ".csv", sep = "")
+xxx <- paste("data/sweepnet_2012_buffer.txt", sep = "")
 
-x <- as.data.frame(read.csv(xxx))
-x <- x[-which(x$Identifi_1== "0"), ]
+x <- as.data.frame(read.delim2(xxx, header=TRUE, sep=","))
+x <- x[-which(x$Identifier== " "), ]
 x <- x[-which(x$GRIDCODE== "0"), ]
 
 #subset based on observation number
-x <- x[which(x$Identifi_1==l),]
+x <- x[which(x$Identifier==l),]
 
 
 obs <- unique(x[12])
-ring <- data.matrix(unique(x[9]))
+ring <- as.data.frame(unique(x[9]))
+ring <- as.numeric(as.character(ring$ToBufDist))
 ring <- sort(ring, decreasing=TRUE)
 ring <- t(ring)
 ring <- t(ring)
@@ -48,6 +50,9 @@ ringspan <- c(1:ring_total)
 #--thru ringbycroptype (387 different combinations of croptype and ring distance.  
 #--Then take that all those vectors and append
 #--as columns
+
+x$ToBufDist <- as.numeric(as.character(x$ToBufDist))
+x$F_AREA <- as.numeric(as.character(x$F_AREA))
 
  for (j in ring) {
   for (k in croptype) {
@@ -83,92 +88,90 @@ assign(paste("obs_matrix", "_", l, sep = ""), cbind(idlist, obs_matrix))
   
 #}
 
-Fixing duplicate geometry that got merged earlier.  
+#Fixing duplicate geometry that got merged earlier.  
 
-obs_matrix_3 <- obs_matrix_2
-obs_matrix_3[,1] = 3
+obs_matrix_2012_3 <- obs_matrix_2012_2
+obs_matrix_2012_3[,1] = "2012_3"
 
-obs_matrix_4 <- obs_matrix_2
-obs_matrix_4[,1] = 4
-obs_matrix_5 <- obs_matrix_2
-obs_matrix_5[,1] = 5
-obs_matrix_6 <- obs_matrix_2
-obs_matrix_6[,1] = 6
+obs_matrix_2012_4 <- obs_matrix_2012_2
+obs_matrix_2012_4[,1] = "2012_4"
+obs_matrix_2012_5 <- obs_matrix_2012_2
+obs_matrix_2012_5[,1] = "2012_5"
+obs_matrix_2012_6 <- obs_matrix_2012_2
+obs_matrix_2012_6[,1] = "2012_6"
 
-obs_matrix_7 <- obs_matrix_6
-obs_matrix_7[,1] = 7
+obs_matrix_2012_7 <- obs_matrix_2012_6
+obs_matrix_2012_7[,1] = "2012_7"
 
-obs_matrix_12 <- obs_matrix_11
-obs_matrix_12[,1] = 12
+obs_matrix_2012_12 <- obs_matrix_2012_11
+obs_matrix_2012_12[,1] = "2012_12"
 
-obs_matrix_23 <- obs_matrix_22
-obs_matrix_23[,1] = 23
+obs_matrix_2012_23 <- obs_matrix_2012_22
+obs_matrix_2012_23[,1] = "2012_23"
 
-obs_matrix_24 <- obs_matrix_22
-obs_matrix_24[,1] = 24
+obs_matrix_2012_24 <- obs_matrix_2012_22
+obs_matrix_24[,1] = "2012_24"
 
-obs_matrix_25 <- obs_matrix_22
-obs_matrix_25[,1] = 25
+obs_matrix_2012_25 <- obs_matrix_2012_22
+obs_matrix_2012_25[,1] = "2012_25"
 
-obs_matrix_26 <- obs_matrix_22
-obs_matrix_26[,1] = 26
+obs_matrix_2012_26 <- obs_matrix_2012_22
+obs_matrix_2012_26[,1] = "2012_26"
 
-obs_matrix_27 <- obs_matrix_22
-obs_matrix_27[,1] = 27
+obs_matrix_2012_27 <- obs_matrix_2012_22
+obs_matrix_27[,1] = "2012_27"
 
-obs_matrix_28 <- obs_matrix_22
-obs_matrix_28[,1] = 28
+obs_matrix_2012_28 <- obs_matrix_2012_22
+obs_matrix_2012_28[,1] = "2012_28"
 
 
  
-obs_matrix_37 <- obs_matrix_36
-obs_matrix_37[,1] = 37
+obs_matrix_2012_37 <- obs_matrix_2012_36
+obs_matrix_2012_37[,1] = "2012_37"
 
-obs_matrix_38 <- obs_matrix_36
-obs_matrix_38[,1] = 38
+obs_matrix_2012_38 <- obs_matrix_2012_36
+obs_matrix_2012_38[,1] = "2012_38"
 
-obs_matrix_39 <- obs_matrix_36
-obs_matrix_39[,1] = 39
+obs_matrix_2012_39 <- obs_matrix_2012_36
+obs_matrix_2012_39[,1] = "2012_39"
 
-obs_matrix_40 <- obs_matrix_36
-obs_matrix_40[,1] = 40
+obs_matrix_2012_40 <- obs_matrix_2012_36
+obs_matrix_2012_40[,1] = "2012_40"
 
-obs_matrix_41 <- obs_matrix_36
-obs_matrix_41[,1] = 41
+obs_matrix_2012_41 <- obs_matrix_2012_36
+obs_matrix_2012_41[,1] = "2012_41"
 
-obs_matrix_42 <- obs_matrix_36
-obs_matrix_42[,1] = 42
+obs_matrix_2012_42 <- obs_matrix_2012_36
+obs_matrix_2012_42[,1] = "2012_42"
 
-obs_matrix_43 <- obs_matrix_36
-obs_matrix_43[,1] = 43
+obs_matrix_2012_43 <- obs_matrix_2012_36
+obs_matrix_2012_43[,1] = "2012_43"
 
-obs_matrix_44 <- obs_matrix_36
-obs_matrix_44[,1] = 44
+obs_matrix_2012_44 <- obs_matrix_2012_36
+obs_matrix_2012_44[,1] = "2012_44"
 
-obs_matrix_45 <- obs_matrix_36
-obs_matrix_45[,1] = 45
+obs_matrix_2012_45 <- obs_matrix_2012_36
+obs_matrix_2012_45[,1] = "2012_45"
 
-obs_matrix_46 <- obs_matrix_36
-obs_matrix_46[,1] = 6
+obs_matrix_2012_46 <- obs_matrix_2012_36
+obs_matrix_2012_46[,1] = "2012_46"
 
-obs_matrix_47 <- obs_matrix_36
-obs_matrix_47[,1] = 47
-
-
-obs_matrix_49 <- obs_matrix_48
-obs_matrix_49[,1] = 49
-
-obs_matrix_50 <- obs_matrix_48
-obs_matrix_50[,1] = 50
-
-obs_matrix_51 <- obs_matrix_48
-obs_matrix_51[,1] = 51
+obs_matrix_2012_47 <- obs_matrix_2012_36
+obs_matrix_2012_47[,1] = "2012_47"
 
 
-obs_matrix_63 <- obs_matrix_62
-obs_matrix_63[,1] = 63
+obs_matrix_2012_49 <- obs_matrix_2012_48
+obs_matrix_2012_49[,1] = "2012_49"
+
+obs_matrix_2012_50 <- obs_matrix_2012_48
+obs_matrix_2012_50[,1] = "2012_50"
+
+obs_matrix_2012_51 <- obs_matrix_2012_48
+obs_matrix_2012_51[,1] = "2012_51"
 
 
+obs_matrix_2012_63 <- obs_matrix_2012_62
+obs_matrix_2012_63[,1] = "2012_63"
 
 
 
@@ -191,20 +194,22 @@ obs_matrix_63[,1] = 63
 
 
 
-final <- rbind.fill.matrix(obs_matrix_1, obs_matrix_2,obs_matrix_3,obs_matrix_4, obs_matrix_5,
-                           obs_matrix_6,obs_matrix_7, obs_matrix_8,obs_matrix_9,obs_matrix_10, 
-                           obs_matrix_11,obs_matrix_3,obs_matrix_12, obs_matrix_13,obs_matrix_14,
-                           obs_matrix_15, obs_matrix_16,obs_matrix_17,obs_matrix_18, obs_matrix_19,
-                           obs_matrix_20,obs_matrix_21, obs_matrix_22,obs_matrix_23,obs_matrix_24, 
-                           obs_matrix_25,obs_matrix_26,obs_matrix_27, obs_matrix_28,obs_matrix_29,
-                           obs_matrix_30, obs_matrix_31,obs_matrix_32,obs_matrix_33, obs_matrix_34,
-                           obs_matrix_35,obs_matrix_36, obs_matrix_37,obs_matrix_38,obs_matrix_39, 
-                           obs_matrix_40,obs_matrix_41,obs_matrix_42, obs_matrix_43,obs_matrix_44,
-                           obs_matrix_45, obs_matrix_46,obs_matrix_47,obs_matrix_48, obs_matrix_49,
-                           obs_matrix_50,obs_matrix_51, obs_matrix_52,obs_matrix_53,obs_matrix_54, 
-                           obs_matrix_55,obs_matrix_56,obs_matrix_57, obs_matrix_58,obs_matrix_59,
-                           obs_matrix_60, obs_matrix_61,obs_matrix_62,obs_matrix_63, obs_matrix_64,
-                           obs_matrix_65,obs_matrix_66, fill=TRUE)
+
+
+final <- rbind.fill.matrix(obs_matrix_2012_1, obs_matrix_2012_2,obs_matrix_2012_3,obs_matrix_2012_4, obs_matrix_2012_5,
+                           obs_matrix_2012_6,obs_matrix_2012_7, obs_matrix_2012_8,obs_matrix_2012_9,obs_matrix_2012_10, 
+                           obs_matrix_2012_11,obs_matrix_2012_3,obs_matrix_2012_12, obs_matrix_2012_13,obs_matrix_2012_14,
+                           obs_matrix_2012_15, obs_matrix_2012_16,obs_matrix_2012_17,obs_matrix_2012_18, obs_matrix_2012_19,
+                           obs_matrix_2012_20,obs_matrix_2012_21, obs_matrix_2012_22,obs_matrix_2012_23,obs_matrix_2012_24, 
+                           obs_matrix_2012_25,obs_matrix_2012_26,obs_matrix_2012_27, obs_matrix_2012_28,obs_matrix_2012_29,
+                           obs_matrix_2012_30, obs_matrix_2012_31,obs_matrix_2012_32,obs_matrix_2012_33, obs_matrix_2012_34,
+                           obs_matrix_2012_35,obs_matrix_2012_36, obs_matrix_2012_37,obs_matrix_2012_38,obs_matrix_2012_39, 
+                           obs_matrix_2012_40,obs_matrix_2012_41,obs_matrix_2012_42, obs_matrix_2012_43,obs_matrix_2012_44,
+                           obs_matrix_2012_45, obs_matrix_2012_46,obs_matrix_2012_47,obs_matrix_2012_48, obs_matrix_2012_49,
+                           obs_matrix_2012_50,obs_matrix_2012_51, obs_matrix_2012_52,obs_matrix_2012_53,obs_matrix_2012_54, 
+                           obs_matrix_2012_55,obs_matrix_2012_56,obs_matrix_2012_57, obs_matrix_2012_58,obs_matrix_2012_59,
+                           obs_matrix_2012_60, obs_matrix_2012_61,obs_matrix_2012_62,obs_matrix_2012_63, obs_matrix_2012_64,
+                           obs_matrix_2012_65,obs_matrix_2012_66, fill=TRUE)
 
 final <- final[1:536,]
 
@@ -220,6 +225,11 @@ ringfinal <- rbind(ring, ringfinal)
 
 #ringfinal <- as.matrix(ringfinal)
 final <- cbind(ringfinal, final)
+
+final2 <- data.frame(final)
+colnames(final2) <- colnames(final)
+
+final <- final2
 #write(final, file="2011aphidfinalresult.txt")
 
 #colnames(final) <- c("ring", "SiteID", "Spring Wheat", "Dry Beans", "Barley", "Grassland Herbaceous", 
@@ -234,7 +244,9 @@ final <- cbind(ringfinal, final)
 
 #--fix below to write xls file
 
-write.xlsx(final, "2012aphidfinalresult.xls", sheetName="Sheet1",
-           col.names=TRUE, row.names=TRUE, append=FALSE, showNA=TRUE)
+write.csv(final, file = "data/sweepnet_2012_final.csv")
+
+#write.xlsx(final, "2012aphidfinalresult.xls", sheetName="Sheet1",
+#           col.names=TRUE, row.names=TRUE, append=FALSE, showNA=TRUE)
 
 

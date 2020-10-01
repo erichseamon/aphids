@@ -19,7 +19,7 @@ aphids_11_14 <- melt(data = aphids_11_14, id.vars = c("site_year", "ring", "Year
 "Barren"        ,           "Sunflower"  ,              "Rapeseed"       ))         
 
 
-aphids_location <- read.csv("./finaldata/sweepnet_DecDeg_modified_v3.csv", header=TRUE, strip.white = TRUE)
+aphids_location <- read.csv("./finaldata/sweepnet_DecDeg_modified_v4.csv", header=TRUE, strip.white = TRUE)
 aphids_location <- aphids_location[,c(1:ncol(aphids_location)-1)]
 aphids_location$site_year <- paste(aphids_location$Year, "_", aphids_location$SiteID, sep="")
 aphids_location <- aphids_location[,c(ncol(aphids_location), 1:ncol(aphids_location)-1)]
@@ -31,7 +31,7 @@ aphid_merge <- na.omit(aphid_merge)
 aphid_merge$variable <- as.factor(aphid_merge$variable)
 aphid_merge$value <- as.numeric(as.character(aphid_merge$value))
 
-write.csv(aphid_merge, file = "./finaldata/aphid_merge.csv", row.names=FALSE)
+write.csv(aphid_merge, file = "./finaldata/aphid_merge_2.csv", row.names=FALSE)
 
 
 

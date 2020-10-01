@@ -1,30 +1,33 @@
 library(plyr)
-library(xlsx)
 
 finalmatrix <- data.frame()
-file <- c(1,2,11,12,13,14,15,16,17,18,20,25,36,38,39,51,53,54,55,56,57,58,59,60,61,62,63,64,65,66) #--number of aphid observations for 2011
+file <- c(1,2,11,12,13,14,15,16,17,18,20,22,23,24,25,31,32,33,34,35,36,38,39,51,53,54,55,56,57,58,59,60,61,62,63,64,66) #--number of aphid observations for 2011
 for (l in file) {
 
-
+  l <- paste("2013_", l, sep="")
+  
 
 
 #--sets the workspace
-setwd("/nethome/erichs/Aphid 2013 csv results")
+#setwd("/nethome/erichs/Aphid 2013 csv results")
 
 #--reads in the csv file as a data frame
-xxx <- paste("Sweep13outcsv", ".csv", sep = "")
+xxx <- paste("data/sweepnet_2013_buffer.txt", sep = "")
 
-x <- as.data.frame(read.csv(xxx))
-x <- x[-which(x$Identifi_1== "0"), ]
+x <- as.data.frame(read.delim2(xxx, header=TRUE, sep=","))
+x$ToBufDist <- as.numeric(as.character(x$ToBufDist))
+#x <- x[-which(x$Identifier== " "), ]
+x <- x[-which(x$ToBufDist== 0), ]
+
 x <- x[-which(x$GRIDCODE== "0"), ]
 
 #subset based on observation number
-x <- x[which(x$Identifi_1==l),]
+x <- x[which(x$Identifier==l),]
 
 
-obs <- unique(x[12])
-ring <- data.matrix(unique(x[9]))
-ring <- sort(ring, decreasing=TRUE)
+obs <- unique(x[10])
+ring <- as.data.frame(unique(x[8]))
+ring <- as.numeric(as.character(ring$ToBufDist))
 ring <- t(ring)
 ring <- t(ring)
 croptype <- data.matrix(unique(x[4]))
@@ -48,6 +51,9 @@ ringspan <- c(1:ring_total)
 #--thru ringbycroptype (387 different combinations of croptype and ring distance.  
 #--Then take that all those vectors and append
 #--as columns
+
+x$ToBufDist <- as.numeric(as.character(x$ToBufDist))
+x$F_AREA <- as.numeric(as.character(x$F_AREA))
 
  for (j in ring) {
   for (k in croptype) {
@@ -83,88 +89,90 @@ assign(paste("obs_matrix", "_", l, sep = ""), cbind(idlist, obs_matrix))
   
 #}
 
-Fixing duplicate geometry that got merged earlier.  
+#Fixing duplicate geometry that got merged earlier.  
 
-obs_matrix_3 <- obs_matrix_2
-obs_matrix_3[,1] = 3
+obs_matrix_2013_3 <- obs_matrix_2013_2
+obs_matrix_2013_3[,1] = "2013_3"
 
-obs_matrix_4 <- obs_matrix_2
-obs_matrix_4[,1] = 4
-obs_matrix_5 <- obs_matrix_2
-obs_matrix_5[,1] = 5
-obs_matrix_6 <- obs_matrix_2
-obs_matrix_6[,1] = 6
+obs_matrix_2013_4 <- obs_matrix_2013_2
+obs_matrix_2013_4[,1] = "2013_4"
+obs_matrix_2013_5 <- obs_matrix_2013_2
+obs_matrix_2013_5[,1] = "2013_5"
+obs_matrix_2013_6 <- obs_matrix_2013_2
+obs_matrix_2013_6[,1] = "2013_6"
 
-obs_matrix_7 <- obs_matrix_2
-obs_matrix_7[,1] = 7
-obs_matrix_8 <- obs_matrix_2
-obs_matrix_8[,1] = 8
-obs_matrix_9 <- obs_matrix_2
-obs_matrix_9[,1] = 9
-obs_matrix_10 <- obs_matrix_2
-obs_matrix_10[,1] = 10
+obs_matrix_2013_7 <- obs_matrix_2013_2
+obs_matrix_2013_7[,1] = "2013_7"
+obs_matrix_2013_8 <- obs_matrix_2013_2
+obs_matrix_2013_8[,1] = "2013_8"
+obs_matrix_2013_9 <- obs_matrix_2013_2
+obs_matrix_2013_9[,1] = "2013_9"
+obs_matrix_2013_10 <- obs_matrix_2013_2
+obs_matrix_2013_10[,1] = "2013_10"
 
-obs_matrix_19 <- obs_matrix_18
-obs_matrix_19[,1] = 19
+obs_matrix_2013_19 <- obs_matrix_2013_18
+obs_matrix_2013_19[,1] = "2013_19"
 
-obs_matrix_21 <- obs_matrix_20
-obs_matrix_21[,1] = 21
+obs_matrix_2013_21 <- obs_matrix_2013_20
+obs_matrix_2013_21[,1] = "2013_21"
 
-obs_matrix_26 <- obs_matrix_25
-obs_matrix_26[,1] = 26
-obs_matrix_27 <- obs_matrix_25
-obs_matrix_27[,1] = 27
-obs_matrix_28 <- obs_matrix_25
-obs_matrix_28[,1] = 28
-obs_matrix_29 <- obs_matrix_25
-obs_matrix_29[,1] = 29
-obs_matrix_30 <- obs_matrix_25
-obs_matrix_30[,1] =30
+obs_matrix_2013_26 <- obs_matrix_2013_25
+obs_matrix_2013_26[,1] = "2013_26"
+obs_matrix_2013_27 <- obs_matrix_2013_25
+obs_matrix_2013_27[,1] = "2013_27"
+obs_matrix_2013_28 <- obs_matrix_2013_25
+obs_matrix_2013_28[,1] = "2013_28"
+obs_matrix_2013_29 <- obs_matrix_2013_25
+obs_matrix_2013_29[,1] = "2013_29"
+obs_matrix_2013_30 <- obs_matrix_2013_25
+obs_matrix_2013_30[,1] ="2013_30"
 
-obs_matrix_37 <- obs_matrix_36
-obs_matrix_37[,1] = 37
+obs_matrix_2013_37 <- obs_matrix_2013_36
+obs_matrix_2013_37[,1] = "2013_37"
 
-obs_matrix_40 <- obs_matrix_39
-obs_matrix_40[,1] = 40
-obs_matrix_41 <- obs_matrix_39
-obs_matrix_41[,1] = 41
-obs_matrix_42 <- obs_matrix_39
-obs_matrix_42[,1] = 42
-obs_matrix_43 <- obs_matrix_39
-obs_matrix_43[,1] = 43
-obs_matrix_44 <- obs_matrix_39
-obs_matrix_44[,1] = 44
-obs_matrix_45 <- obs_matrix_39
-obs_matrix_45[,1] = 45
-obs_matrix_46 <- obs_matrix_39
-obs_matrix_46[,1] = 46
-obs_matrix_47 <- obs_matrix_39
-obs_matrix_47[,1] = 47
-obs_matrix_48 <- obs_matrix_39
-obs_matrix_48[,1] = 48
-obs_matrix_49 <- obs_matrix_39
-obs_matrix_49[,1] = 49
-obs_matrix_50 <- obs_matrix_39
-obs_matrix_50[,1] = 50
+obs_matrix_2013_40 <- obs_matrix_2013_39
+obs_matrix_2013_40[,1] = "2013_40"
+obs_matrix_2013_41 <- obs_matrix_2013_39
+obs_matrix_2013_41[,1] = "2013_41"
+obs_matrix_2013_42 <- obs_matrix_2013_39
+obs_matrix_2013_42[,1] = "2013_42"
+obs_matrix_2013_43 <- obs_matrix_2013_39
+obs_matrix_2013_43[,1] = "2013_43"
+obs_matrix_2013_44 <- obs_matrix_2013_39
+obs_matrix_2013_44[,1] = "2013_44"
+obs_matrix_2013_45 <- obs_matrix_2013_39
+obs_matrix_2013_45[,1] = "2013_45"
+obs_matrix_2013_46 <- obs_matrix_2013_39
+obs_matrix_2013_46[,1] = "2013_46"
+obs_matrix_2013_47 <- obs_matrix_2013_39
+obs_matrix_2013_47[,1] = "2013_47"
+obs_matrix_2013_48 <- obs_matrix_2013_39
+obs_matrix_2013_48[,1] = "2013_48"
+obs_matrix_2013_49 <- obs_matrix_2013_39
+obs_matrix_2013_49[,1] = "2013_49"
+obs_matrix_2013_50 <- obs_matrix_2013_39
+obs_matrix_2013_50[,1] = "2013_50"
 
-obs_matrix_52 <- obs_matrix_51
-obs_matrix_52[,1] = 52
+obs_matrix_2013_52 <- obs_matrix_2013_51
+obs_matrix_2013_52[,1] = "2013_52"
 
+obs_matrix_2013_65 <- obs_matrix_2013_64
+obs_matrix_2013_65[,1] = "2013_65"
 
-final <- rbind.fill.matrix(obs_matrix_1, obs_matrix_2,obs_matrix_3,obs_matrix_4, obs_matrix_5,
-                           obs_matrix_6,obs_matrix_7, obs_matrix_8,obs_matrix_9,obs_matrix_10, 
-                           obs_matrix_11,obs_matrix_3,obs_matrix_12, obs_matrix_13,obs_matrix_14,
-                           obs_matrix_15, obs_matrix_16,obs_matrix_17,obs_matrix_18, obs_matrix_19,
-                           obs_matrix_20,obs_matrix_21, obs_matrix_22,obs_matrix_23,obs_matrix_24, 
-                           obs_matrix_25,obs_matrix_26,obs_matrix_27, obs_matrix_28,obs_matrix_29,
-                           obs_matrix_30, obs_matrix_31,obs_matrix_32,obs_matrix_33, obs_matrix_34,
-                           obs_matrix_35,obs_matrix_36, obs_matrix_37,obs_matrix_38,obs_matrix_39, 
-                           obs_matrix_40,obs_matrix_41,obs_matrix_42, obs_matrix_43,obs_matrix_44,
-                           obs_matrix_45, obs_matrix_46,obs_matrix_47,obs_matrix_48, obs_matrix_49,
-                           obs_matrix_50,obs_matrix_51, obs_matrix_52,obs_matrix_53,obs_matrix_54, 
-                           obs_matrix_55,obs_matrix_56,obs_matrix_57, obs_matrix_58,obs_matrix_59,
-                           obs_matrix_60, obs_matrix_61,obs_matrix_62,obs_matrix_63, obs_matrix_64,
-                           obs_matrix_65,obs_matrix_66, fill=TRUE)
+final <- rbind.fill.matrix(obs_matrix_2013_1, obs_matrix_2013_2,obs_matrix_2013_3,obs_matrix_2013_4, obs_matrix_2013_5,
+                           obs_matrix_2013_6,obs_matrix_2013_7, obs_matrix_2013_8,obs_matrix_2013_9,obs_matrix_2013_10, 
+                           obs_matrix_2013_11,obs_matrix_2013_3,obs_matrix_2013_12, obs_matrix_2013_13,obs_matrix_2013_14,
+                           obs_matrix_2013_15, obs_matrix_2013_16,obs_matrix_2013_17,obs_matrix_2013_18, obs_matrix_2013_19,
+                           obs_matrix_2013_20,obs_matrix_2013_21, obs_matrix_2013_22,obs_matrix_2013_23,obs_matrix_2013_24, 
+                           obs_matrix_2013_25,obs_matrix_2013_26,obs_matrix_2013_27, obs_matrix_2013_28,obs_matrix_2013_29,
+                           obs_matrix_2013_30, obs_matrix_2013_31,obs_matrix_2013_32,obs_matrix_2013_33, obs_matrix_2013_34,
+                           obs_matrix_2013_35,obs_matrix_2013_36, obs_matrix_2013_37,obs_matrix_2013_38,obs_matrix_2013_39, 
+                           obs_matrix_2013_40,obs_matrix_2013_41,obs_matrix_2013_42, obs_matrix_2013_43,obs_matrix_2013_44,
+                           obs_matrix_2013_45, obs_matrix_2013_46,obs_matrix_2013_47,obs_matrix_2013_48, obs_matrix_2013_49,
+                           obs_matrix_2013_50,obs_matrix_2013_51, obs_matrix_2013_52,obs_matrix_2013_53,obs_matrix_2013_54, 
+                           obs_matrix_2013_55,obs_matrix_2013_56,obs_matrix_2013_57, obs_matrix_2013_58,obs_matrix_2013_59,
+                           obs_matrix_2013_60, obs_matrix_2013_61,obs_matrix_2013_62,obs_matrix_2013_63, obs_matrix_2013_64,
+                           obs_matrix_2013_65,obs_matrix_2013_66, fill=TRUE)
 
 final <- final[1:536,]
 
@@ -182,6 +190,10 @@ ringfinal <- rbind(ring, ringfinal)
 final <- cbind(ringfinal, final)
 #write(final, file="2011aphidfinalresult.txt")
 
+final2 <- data.frame(final)
+colnames(final2) <- colnames(final)
+
+final <- final2
 #names(pre.use.survey) <- new.cols$new.colname
 
 
@@ -197,7 +209,9 @@ final <- cbind(ringfinal, final)
 
 #--fix below to write xls file
 
-write.xlsx(final, "2013aphidfinalresult.xls", sheetName="Sheet1",
-           col.names=TRUE, row.names=TRUE, append=FALSE, showNA=TRUE)
+write.csv(final, file = "data/sweepnet_2013_final.csv")
+
+#write.xlsx(final, "2013aphidfinalresult.xls", sheetName="Sheet1",
+#           col.names=TRUE, row.names=TRUE, append=FALSE, showNA=TRUE)
 
 
