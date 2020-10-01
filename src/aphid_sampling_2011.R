@@ -223,7 +223,7 @@ final <- final[1:584,]
 
 ringfinal <- ring
 
-filefor <- c(1:73)
+filefor <- c(1:72)
 
 for (i in filefor) {
   
