@@ -1,6 +1,16 @@
 library(dplyr)
 library(reshape2)
 
+aphids_2011 <- read.csv("data/sweepnet_2011_final.csv", header=TRUE, strip.white = TRUE)
+aphids_2012 <- read.csv("data/sweepnet_2012_final.csv", header=TRUE, strip.white = TRUE)
+aphids_2013 <- read.csv("data/sweepnet_2013_final.csv", header=TRUE, strip.white = TRUE)
+aphids_2014 <- read.csv("data/sweepnet_2014_final.csv", header=TRUE, strip.white = TRUE)
+l <- list(aphids_2011, aphids_2012, aphids_2013, aphids_2014)
+
+library(gtools)
+aphids_combined <- do.call(smartbind,l)
+
+
 aphids_11_14 <- read.csv("./finaldata/2011_2014aphidfinalresult.csv", header=TRUE, strip.white = TRUE)
 aphids_11_14 <- aphids_11_14[,c(1:ncol(aphids_11_14)-1)]
 aphids_11_14$site_year <- paste(aphids_11_14$Year, "_", aphids_11_14$SiteID, sep="")
