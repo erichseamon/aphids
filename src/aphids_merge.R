@@ -1,10 +1,10 @@
 library(dplyr)
 library(reshape2)
 
-aphids_2011 <- read.csv("data/sweepnet_2011_final.csv", header=TRUE, strip.white = TRUE)
-aphids_2012 <- read.csv("data/sweepnet_2012_final.csv", header=TRUE, strip.white = TRUE)
-aphids_2013 <- read.csv("data/sweepnet_2013_final.csv", header=TRUE, strip.white = TRUE)
-aphids_2014 <- read.csv("data/sweepnet_2014_final.csv", header=TRUE, strip.white = TRUE)
+aphids_2011 <- read.csv("data/sweepnet_2011_final_WW.csv", header=TRUE, strip.white = TRUE)
+aphids_2012 <- read.csv("data/sweepnet_2012_final_WW.csv", header=TRUE, strip.white = TRUE)
+aphids_2013 <- read.csv("data/sweepnet_2013_final_WW.csv", header=TRUE, strip.white = TRUE)
+aphids_2014 <- read.csv("data/sweepnet_2014_final_WW.csv", header=TRUE, strip.white = TRUE)
 l <- list(aphids_2011, aphids_2012, aphids_2013, aphids_2014)
 
 library(gtools)
@@ -46,8 +46,8 @@ aphid_data_wide <- aphid_merge
 
 aphid_data_long <- gather(aphid_merge, Crop, Pct, X21:X14, factor_key=TRUE)
 
-write.csv(aphid_data_wide, file = "./finaldata/aphid_data_wide.csv", row.names=FALSE)
-write.csv(aphid_data_long, file = "./finaldata/aphid_data_long.csv", row.names=FALSE)
+write.csv(aphid_data_wide, file = "./finaldata/aphid_data_wide_feb2021.csv", row.names=FALSE)
+write.csv(aphid_data_long, file = "./finaldata/aphid_data_long_feb2021.csv", row.names=FALSE)
 
 
 
