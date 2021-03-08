@@ -1,10 +1,10 @@
 library(dplyr)
 library(reshape2)
 
-aphids_2011 <- read.csv("data/sweepnet_2011_final_WW.csv", header=TRUE, strip.white = TRUE)
-aphids_2012 <- read.csv("data/sweepnet_2012_final_WW.csv", header=TRUE, strip.white = TRUE)
-aphids_2013 <- read.csv("data/sweepnet_2013_final_WW.csv", header=TRUE, strip.white = TRUE)
-aphids_2014 <- read.csv("data/sweepnet_2014_final_WW.csv", header=TRUE, strip.white = TRUE)
+aphids_2011 <- read.csv("data/sweepnet_2011_final_WW_rev2.csv", header=TRUE, strip.white = TRUE)
+aphids_2012 <- read.csv("data/sweepnet_2012_final_WW_rev2.csv", header=TRUE, strip.white = TRUE)
+aphids_2013 <- read.csv("data/sweepnet_2013_final_WW_rev2.csv", header=TRUE, strip.white = TRUE)
+aphids_2014 <- read.csv("data/sweepnet_2014_final_WW_rev2.csv", header=TRUE, strip.white = TRUE)
 l <- list(aphids_2011, aphids_2012, aphids_2013, aphids_2014)
 
 library(gtools)
@@ -16,6 +16,17 @@ aphids_11_14 <- aphids_11_14[,c(1:ncol(aphids_11_14)-1)]
 #aphids_11_14$site_year <- paste(aphids_11_14$Year, "_", aphids_11_14$SiteID, sep="")
 aphids_11_14$site_year <- aphids_11_14$SiteID
 aphids_11_14 <- aphids_11_14[,c(ncol(aphids_11_14), 1:ncol(aphids_11_14)-1)]
+
+cdl_lookup <- read.csv("cdl_lookup/cdl_lookup.csv")
+cdl_lookup$Value <- paste("X", cdl_lookup$Value, sep="")
+column <- colnames(aphids_11_14)
+column1 <- as.data.frame(column[5:length(column)])
+colnames(column1) <- c("Value")
+column1$ID <- 1:nrow(column1)
+column2 <- merge(cdl_lookup, column1, by="Value")
+column2 <- column2[order(column2$ID), ]
+column_refined <- c(column[1:4], as.character(column2$Description))
+colnames(aphids_11_14) <- column_refined
 
 #aphids_11_14 <- melt(data = aphids_11_14, id.vars = c("site_year", "ring", "Year", "SiteID"), measure.vars = c("Winter.Wheat","Lentils"                  ,"Peas"       ,             
 #"Barley" ,                  "Spring.Wheat"   ,          "Pasture.Grass"        ,    "Developed.Open.Space"    ,
@@ -44,7 +55,7 @@ aphid_merge$value <- as.numeric(as.character(aphid_merge$value))
 
 aphid_data_wide <- aphid_merge
 
-aphid_data_long <- gather(aphid_merge, Crop, Pct, X21:X14, factor_key=TRUE)
+aphid_data_long <- gather(aphid_merge, Crop, Pct, `Spring Wheat`:`Mint`, factor_key=TRUE)
 
 write.csv(aphid_data_wide, file = "./finaldata/aphid_data_wide_feb2021.csv", row.names=FALSE)
 write.csv(aphid_data_long, file = "./finaldata/aphid_data_long_feb2021.csv", row.names=FALSE)

@@ -1,7 +1,7 @@
 library(plyr)
 
 finalmatrix <- data.frame()
-file <- c(1,2,11,12,13,14,15,16,17,22,23,24,25,31,32,33,34,35,36,38,39,51,53,54,55,56,57,58,59,60,61,62,63,64,66) #--number of aphid observations for 2011
+file <- c(1,2,11,12,13,14,15,16,17,22,23,24,25,31,32,33,34,35,36,38,39,51,53,54,55,56,57,58,59,60,61,62,63,64,65,66) #--number of aphid observations for 2011
 for (l in file) {
 
   l <- paste("2013_", l, sep="")
@@ -13,24 +13,24 @@ for (l in file) {
 
   
   #--reads in the csv file as a data frame
-  x <- read.delim2("data/sweepnet_2013_buffer_WW.txt", sep=",", header=TRUE)
+  x <- read.delim2("data/sweepnet_2013_final_WW_feb2021.txt", sep=",", header=TRUE)
   
   x$ToBufDist <- as.numeric(as.character(x$ToBufDist))
   #x <- x[-which(x$Identifier== " "), ]
-  x <- x[-which(x$ToBufDist== 0), ]
+  #x <- x[-which(x$ToBufDist== 0), ]
   #x <- x[-which(x$Identifier== ""), ]
-  x <- x[-which(x$GRIDCODE== "0"), ]
+  #x <- x[-which(x$GRIDCODE== "0"), ]
   
   #subset based on observation number
   x <- x[which(x$Identifier==l),]
 
 
-obs <- unique(x[10])
-ring <- as.data.frame(unique(x[8]))
+obs <- unique(x[6])
+ring <- as.data.frame(unique(x[13]))
 ring <- as.numeric(as.character(ring$ToBufDist))
 ring <- t(ring)
 ring <- t(ring)
-croptype <- data.matrix(unique(x[4]))
+croptype <- data.matrix(unique(x[17]))
 colnames(ring) <- 'ring'
 
 #--creates a variable for the total number of observations, ring types, and croptypes
@@ -168,14 +168,14 @@ final <- rbind.fill.matrix(obs_matrix_2013_1, obs_matrix_2013_2,obs_matrix_2013_
                            obs_matrix_2013_51, obs_matrix_2013_53,obs_matrix_2013_54, 
                            obs_matrix_2013_55,obs_matrix_2013_56,obs_matrix_2013_57, obs_matrix_2013_58,obs_matrix_2013_59,
                            obs_matrix_2013_60, obs_matrix_2013_61,obs_matrix_2013_62,obs_matrix_2013_63, obs_matrix_2013_64,
-                           obs_matrix_2013_66, fill=TRUE)
+                           obs_matrix_2013_65,obs_matrix_2013_66, fill=TRUE)
 
 final <- final[1:280,]
 
 ringfinal <- ring
 
 #filefor <- c(1:66)
-filefor <- c(1,2,11,12,13,14,15,16,17,22,23,24,25,31,32,33,34,35,36,38,39,51,53,54,55,56,57,58,59,60,61,62,63,64,66) #--number of aphid observations for 2011
+filefor <- c(1,2,11,12,13,14,15,16,17,22,23,24,25,31,32,33,34,35,36,38,39,51,53,54,55,56,57,58,59,60,61,62,63,64,65,66) #--number of aphid observations for 2011
 obsnumber <- length(filefor)
 #for (i in filefor) {
 
@@ -207,7 +207,7 @@ final <- final2
 
 #--fix below to write xls file
 
-write.csv(final, file = "/mnt/lfs2/erichs/git/aphids/data/sweepnet_2013_final_WW.csv")
+write.csv(final, file = "/mnt/lfs2/erichs/git/aphids/data/sweepnet_2013_final_WW_rev2.csv")
 
 #write.xlsx(final, "2013aphidfinalresult.xls", sheetName="Sheet1",
 #           col.names=TRUE, row.names=TRUE, append=FALSE, showNA=TRUE)

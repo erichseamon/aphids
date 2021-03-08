@@ -13,25 +13,25 @@ for (l in file) {
 #setwd("/nethome/erichs/Aphid 2012 csv results")
   
   #--reads in the csv file as a data frame
-  x <- read.delim2("data/sweepnet_2012_buffer_WW.txt", sep=",", header=TRUE)
+  x <- read.delim2("data/sweepnet_2012_final_WW_feb2021.txt", sep=",", header=TRUE)
   
   x$ToBufDist <- as.numeric(as.character(x$ToBufDist))
   #x <- x[-which(x$Identifier== " "), ]
-  x <- x[-which(x$ToBufDist== 0), ]
+ # x <- x[-which(x$ToBufDist== 0), ]
   #x <- x[-which(x$Identifier== ""), ]
-  x <- x[-which(x$GRIDCODE== "0"), ]
+#  x <- x[-which(x$GRIDCODE== "0"), ]
   
   #subset based on observation number
   x <- x[which(x$Identifier==l),]
 
 
-obs <- unique(x[11])
-ring <- as.data.frame(unique(x[9]))
+obs <- unique(x[6])
+ring <- as.data.frame(unique(x[13]))
 ring <- as.numeric(as.character(ring$ToBufDist))
 ring <- sort(ring, decreasing=TRUE)
 ring <- t(ring)
 ring <- t(ring)
-croptype <- data.matrix(unique(x[4]))
+croptype <- data.matrix(unique(x[17]))
 colnames(ring) <- 'ring'
 
 #--creates a variable for the total number of observations, ring types, and croptypes
@@ -221,7 +221,7 @@ final <- final2
 
 #--fix below to write xls file
 
-write.csv(final, file = "/mnt/lfs2/erichs/git/aphids/data/sweepnet_2012_final_WW.csv")
+write.csv(final, file = "/mnt/lfs2/erichs/git/aphids/data/sweepnet_2012_final_WW_rev2.csv")
 
 #write.xlsx(final, "2012aphidfinalresult.xls", sheetName="Sheet1",
 #           col.names=TRUE, row.names=TRUE, append=FALSE, showNA=TRUE)
