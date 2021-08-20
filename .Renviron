@@ -1,0 +1,4 @@
+PATH=/opt/modules/devel/gcc/6.1.0/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+LD_LIBRARY_PATH=/opt/modules/devel/gcc/6.1.0/lib64:/usr/local/lib
+CC=/opt/modules/devel/gcc/6.1.0/bin/gcc
+CXX=/opt/modules/devel/gcc/6.1.0/bin/g++

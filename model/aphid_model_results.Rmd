@@ -1,0 +1,255 @@
+---
+title: "Aphid Modeling Results - Erich Seamon - 8.20.2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#aphid_modeling.R
+
+#i options:
+
+#TotAph
+#Mfc
+#TotAphNoMfc
+#RelAbundMfc
+#TotDn
+#Totsg
+#TotRp
+#TotSa
+#TotMd
+#TotRm
+#TotMfc
+#TotSe
+#TotAm
+#TotRi
+
+aphid_model <- function(i) {
+
+library(dplyr)
+library(lubridate)
+library(tidyr)
+library(data.table)
+library(caret)
+library(doParallel)
+library(plyr)
+library(gridExtra)
+library(rattle)
+library(rpart)
+
+
+library(cluster)
+library(factoextra)
+
+options(scipen = 999)
+
+data <- read.csv("/mnt/ceph/erichs/git/aphids/modeldata/Aphid_data_Wide_RAW.csv")
+
+data2 <- read.csv("/mnt/ceph/erichs/git/aphids/modeldata/Aphid_wide_Allrings_5.9.21.csv")
+
+data3 <- read.csv("/mnt/ceph/erichs/git/aphids/finaldata/aphid_data_long.csv")
+
+data4 <- read.csv("/mnt/ceph/erichs/git/aphids/finaldata/aphid_data_wide.csv")
+
+
+data2 <- data2[,-c(3,6,8,9)]
+
+
+#π(R + r) (R - r) - ring area
+
+data2$area <- (pi*(data2$ringfinal/2) + ((data2$ringfinal/2) - 250)) * ((data2$ringfinal/2) - ((data2$ringfinal/2) - 250))
+
+data2$Spring.Wheat_area <- data2$Spring.Wheat * data2$area
+data2$Winter.Wheat_area <- data2$Winter.Wheat * data2$area
+data2$allwheat_area <- data2$allwheat * data2$area
+data2$Fallow_area <- data2$Fallow * data2$area
+data2$AllCereal_area <- data2$AllCereal * data2$area
+data2$AllGrasslands_area <- data2$AllGrasslands * data2$area
+data2$AllLegumes_area <- data2$AllLegumes * data2$area
+
+data2WW <- aggregate(data2$Winter.Wheat_area, by=list(data2$site_year), FUN = 'sum')
+data2WW$Winter.Wheat_pct <- data2WW$x/12566370
+data2SW <- aggregate(data2$Spring.Wheat_area, by=list(data2$site_year), FUN = 'sum')
+data2SW$Spring.Wheat_pct <- data2SW$x/12566370
+data2AW <- aggregate(data2$allwheat_area, by=list(data2$site_year), FUN = 'sum')
+data2AW$allwheat_pct <- data2AW$x/12566370
+data2F <- aggregate(data2$Fallow_area, by=list(data2$site_year), FUN = 'sum')
+data2F$Fallow_pct <- data2F$x/12566370
+data2AC <- aggregate(data2$AllCereal_area, by=list(data2$site_year), FUN = 'sum')
+data2AC$AllCereal_pct <- data2AC$x/12566370
+data2AG <- aggregate(data2$AllGrasslands_area, by=list(data2$site_year), FUN = 'sum')
+data2AG$AllGrasslands_pct <- data2AG$x/12566370
+data2AL <- aggregate(data2$AllLegumes_area, by=list(data2$site_year), FUN = 'sum')
+data2AL$AllLegumes_pct <- data2AL$x/12566370
+
+data2a <- cbind(data2WW[c(1,3)], data2SW[3], data2AW[3], data2AC[3], data2AG[3], data2AL[3])
+
+data2 <- subset(data2, ringfinal == 4000)
+data2 <- merge(data2, data2a, by.x = "site_year", by.y = "Group.1")
+
+
+
+
+
+set.seed(103)
+
+fits<-list()
+fits_summary <- NULL
+
+#dependent <- colnames(data2[c(32,22,20,23)])
+fmla <- as.formula(paste(colnames(data2[i]), " ~ ", paste(colnames(data2[c(44,45,46,47,48,49,3,4)]), collapse= "+")))
+
+#corrplot(cor(data2a[c(20,8,9,10,11,3,4)]), method = "square")
+
+inTraining <- createDataPartition(eval(parse(text=paste("data2$", colnames(data2[i]), sep=""))), p = .7, list = FALSE)
+training <- data2[ inTraining,]
+testing  <- data2[-inTraining,]
+
+train_control<- trainControl(method="repeatedcv", savePredictions = "final", returnResamp='all')
+
+fit_rf <- caret::train(fmla, data=training, method="rf", trControl = train_control)
+# fit_glm <- caret::train(fmla, data=training, method="glm", trControl = train_control)
+# fit_knn <- caret::train(fmla, data=training, method="knn",trControl = train_control)
+# fit_svm <- caret::train(fmla, data=training, method="svmRadial", trControl = train_control)
+# fit_treebag <- caret::train(fmla, data=training, method="treebag", trControl = train_control)
+# fit_gbm <- caret::train(fmla, data=training, method="gbm", trControl = train_control)
+
+fit_rpart <- caret::train(fmla, data=training, method="rpart", trControl = train_control)
+
+
+# 
+#data.fit1 <- randomForest(TotMfc ~ Fallow + AllCereal + AllGrasslands + AllLegumes + CDD + LULCRich + CP + ringfinal, data = training, importance = TRUE, na.action = na.omit, mtry = 3)
+# data.fit2 <- randomForest(TotAphNoMfc ~ Fallow + AllCereal + AllGrasslands + AllLegumes + CDD + LULCRich + CP + ringfinal, data = training, importance = TRUE, na.action = na.omit, mtry = 3)
+# data.fit3 <- randomForest(TotAph ~ Fallow + AllCereal + AllGrasslands + AllLegumes  + CDD + LULCRich + CP + ringfinal, data = training, importance = TRUE, na.action = na.omit, mtry = 3)
+# data.fit4 <- randomForest(RelAbundMfc ~ Fallow + AllCereal + AllGrasslands + AllLegumes  + CDD + LULCRich + CP + ringfinal, data = training, importance = TRUE, na.action = na.omit, mtry = 3)
+
+#---Learning Curve Analysis
+
+
+tree_num <- which(fit_rf$finalModel$err.rate[, 1] == min(fit_rf$finalModel$err.rate[, 1]))
+
+lda_data <- learning_curve_dat(dat = fit_rf$trainingData,
+                               outcome = ".outcome",
+                               ## `train` arguments:
+                               metric = "RMSE",
+                               trControl = train_control,
+                               method = "rf", verbose = FALSE)
+
+pts <- pretty(lda_data$RMSE)
+#pts <- c(0,0.1, 0.2, 0.3, 0.4)
+
+lda_data$Data[lda_data$Data == "Resampling"] <- c("Validation")
+p1 <- ggplot(lda_data, aes(x = Training_Size, y = RMSE, color = Data)) +
+  
+  geom_smooth(method = loess, span = .8) +
+  theme_bw()  + ggtitle("Learning Curve Analysis") + theme(axis.title.y = element_text(size=10), axis.title.x = element_text(size = 10), axis.text.x = element_text(size=rel(1), angle = 90, hjust = 1), axis.text.y = element_text(size=rel(1), hjust = 1)) + theme(plot.title = element_text(vjust = 2))  + theme(legend.text=element_text(size=10)) + theme(legend.title=element_text(size=14, face = "bold")) + theme(plot.title = element_text(size=14, face = "bold")) + scale_y_continuous(labels = pts, breaks = pts ) + xlab("Training Size") + ylab("RMSE") + theme(legend.position="bottom") + scale_fill_discrete(name = "Legend")
+
+
+
+p2 <- ggplot(varImp(fit_rf)) + theme_bw()
+
+grid.arrange(p1,p2, ncol = 2)
+print(fit_rf)
+
+#fancyRpartPlot(fit_rpart$finalModel, caption = NULL)
+
+
+}
+
+```
+
+
+## Total Aphids Model
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+aphid_model("TotAph")
+```
+\newpage
+
+## Total Aphids No Mfc Model
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+aphid_model("TotAphNoMfc")
+```
+\newpage
+
+## Relative Abundance Mfc Model
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+aphid_model("RelAbundMfc")
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#aphid_model("TotDn")
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#aphid_model("Totsg")
+```
+\newpage
+
+## Individual Aphids: Rp
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+aphid_model("TotRp")
+```
+\newpage
+
+## Individual Aphids: Sa
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+aphid_model("TotSa")
+```
+\newpage
+
+## Individual Aphids: Md
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+aphid_model("TotMd")
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#aphid_model("TotRm")
+```
+\newpage
+
+## Individual Aphids: Mfc
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+aphid_model("TotMfc")
+```
+\newpage
+
+## Individual Aphids: Rp
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+aphid_model("TotSe")
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#aphid_model("TotAm")
+```
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+#aphid_model("TotRi")
+```
+\newpage
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+# 
+# fit <- varImp(fit_rf)
+# fit$importance$type <- i
+# 
+# fit$importance$name <- rownames(fit$importance)
+# 
+# fit_summary <- max(fit_rf$finalModel[5]$rsq)
+# fits_summary[[i]] <- fit_summary
+# 
+# fits[[i]] <- fit$importance
+
+```
+
+

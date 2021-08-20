@@ -1,5 +1,22 @@
 #aphid_modeling.R
 
+#i options:
+
+#TotAph
+#Mfc
+#TotAphNoMfc
+#RelAbundMfc
+#TotDn
+#Totsg
+#TotRp
+#TotSa
+#TotMd
+#TotRm
+#TotMfc
+#TotSe
+#TotAm
+#TotRi
+
 aphid_model <- function(i) {
 
 library(dplyr)
@@ -9,6 +26,7 @@ library(data.table)
 library(caret)
 library(doParallel)
 library(plyr)
+library(gridExtra)
 
 
 library(cluster)
@@ -31,10 +49,10 @@ set.seed(103)
 fits<-list()
 fits_summary <- NULL
 
-dependent <- colnames(data2[c(32,22,20,23)])
-fmla <- as.formula(paste(dependent[1], " ~ ", paste(colnames(data2[c(8,9,10,11,12,3,4)]), collapse= "+")))
+#dependent <- colnames(data2[c(32,22,20,23)])
+fmla <- as.formula(paste(colnames(data2[i]), " ~ ", paste(colnames(data2[c(8,9,10,11,12,3,4)]), collapse= "+")))
 
-inTraining <- createDataPartition(eval(parse(text=paste("data2$", dependent[i], sep=""))), p = .7, list = FALSE)
+inTraining <- createDataPartition(eval(parse(text=paste("data2$", colnames(data2[i]), sep=""))), p = .7, list = FALSE)
 training <- data2[ inTraining,]
 testing  <- data2[-inTraining,]
 
@@ -54,27 +72,7 @@ fit_rf <- caret::train(fmla, data=training, method="rf", trControl = train_contr
 # data.fit3 <- randomForest(TotAph ~ Fallow + AllCereal + AllGrasslands + AllLegumes  + CDD + LULCRich + CP + ringfinal, data = training, importance = TRUE, na.action = na.omit, mtry = 3)
 # data.fit4 <- randomForest(RelAbundMfc ~ Fallow + AllCereal + AllGrasslands + AllLegumes  + CDD + LULCRich + CP + ringfinal, data = training, importance = TRUE, na.action = na.omit, mtry = 3)
 
-fit <- varImp(fit_rf)
-fit$importance$type <- i
-
-fit$importance$name <- rownames(fit$importance)
-
-fit_summary <- max(fit_rf$finalModel[5]$rsq)
-fits_summary[[i]] <- fit_summary
-
-fits[[i]] <- fit$importance
-}
-
-
-
-
-fits2 <- bind_rows(fits)
-
-ggplot(fits2, aes(x=name, y=Overall, group = type, fill = type)) +
-  geom_bar(stat="identity", position="dodge") +
-  theme(axis.text.x = element_text(angle = 90))
-
-
+#---Learning Curve Analysis
 
 
 tree_num <- which(fit_rf$finalModel$err.rate[, 1] == min(fit_rf$finalModel$err.rate[, 1]))
@@ -90,51 +88,19 @@ pts <- pretty(lda_data$RMSE)
 #pts <- c(0,0.1, 0.2, 0.3, 0.4)
 
 lda_data$Data[lda_data$Data == "Resampling"] <- c("Validation")
-ggplot(lda_data, aes(x = Training_Size, y = RMSE, color = Data)) +
-
+p1 <- ggplot(lda_data, aes(x = Training_Size, y = RMSE, color = Data)) +
+  
   geom_smooth(method = loess, span = .8) +
   theme_bw()  + ggtitle("Learning Curve Analysis") + theme(axis.title.y = element_text(family = "Serif", size=18), axis.title.x = element_text(family = "Serif", size = 18), axis.text.x = element_text(size=rel(1.9), angle = 90, hjust = 1, family = "Serif"), axis.text.y = element_text(size=rel(1.9), hjust = 1, family = "Serif")) + theme(plot.title = element_text(family = "Serif", vjust = 2))  + theme(legend.text=element_text(family = "Serif", size=14)) + theme(legend.title=element_text(family = "Serif", size=16, face = "bold")) + theme(plot.title = element_text(size=24, face = "bold")) + scale_y_continuous(labels = pts, breaks = pts ) + xlab("Training Size") + ylab("RMSE") + theme(legend.position="bottom") + scale_fill_discrete(name = "Legend")
 
 
+print(fit_rf$finalModel)
+
+p2 <- ggplot(varImp(fit_rf))
+
+grid.arrange(p1,p2, ncol = 2)
+
+}
 
 
 
-
-
-#-----
-
-
-
-tree_num <- which(fit_rf$finalModel$err.rate[, 1] == min(fit_rf$finalModel$err.rate[, 1]))
-
-lda_data <- learning_curve_dat(dat = fit_rf$trainingData,
-                              outcome = ".outcome",
-                              ## `train` arguments:
-                              metric = "RMSE",
-                              trControl = train_control,
-                              method = "rf")
-
-pts <- pretty(lda_data$RMSE)
-#pts <- c(0,0.1, 0.2, 0.3, 0.4)
-
-lda_data$Data[lda_data$Data == "Resampling"] <- c("Validation")
-ggplot(lda_data, aes(x = Training_Size, y = RMSE, color = Data)) +
-
-  geom_smooth(method = loess, span = .8) +
-  theme_bw()  + ggtitle("Learning Curve Analysis") + theme(axis.title.y = element_text(family = "Serif", size=18), axis.title.x = element_text(family = "Serif", size = 18), axis.text.x = element_text(size=rel(1.9), angle = 90, hjust = 1, family = "Serif"), axis.text.y = element_text(size=rel(1.9), hjust = 1, family = "Serif")) + theme(plot.title = element_text(family = "Serif", vjust = 2))  + theme(legend.text=element_text(family = "Serif", size=14)) + theme(legend.title=element_text(family = "Serif", size=16, face = "bold")) + theme(plot.title = element_text(size=24, face = "bold")) + scale_y_continuous(labels = pts, breaks = pts ) + xlab("Training Size") + ylab("RMSE") + theme(legend.position="bottom") + scale_fill_discrete(name = "Legend")
-# 
-# sqrt(fit_rf$finalModel$mse[which.min(fit_rf$finalModel$mse)])
-# 
-# which.min(fit_rf$finalModel$mse)
-# 
-# importance <- varImp(fit_rf, scale=TRUE)
-# 
-# importance2 <- importance$importance
-# importance2$variable <- rownames(importance2)
-# importance2 <- importance2[order(-importance2$Overall),]
-# 
-# par(mar=c(6, 7, 2, 3), family = 'serif', mgp=c(5, 1, 0), las=0)
-# 
-# barplot(sort(importance2$Overall), horiz = TRUE, col = "lightblue", ylab = "predictor variables", xlab = "% importance", cex.lab = 1.7, las = 2, cex.axis = 1.8, cex.names = 1.8, names.arg = rev(importance2$variable))
-# 
-# 
