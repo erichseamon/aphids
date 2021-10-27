@@ -1,6 +1,6 @@
 ---
 title: "Supplemental Appendix in support of PAPER TITLE"
-author: "Subodh A, Sanford Eigenbrode, Erich Seamon"
+author: "Subodh Adhikari, Sanford Eigenbrode, Erich Seamon"
 date: "10/22/2021"
 fontsize: 12pt
 output:
