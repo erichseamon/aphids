@@ -59,13 +59,13 @@ library(factoextra)
 
 options(scipen = 999)
 
-data <- read.csv("./data/Aphid_data_Wide_RAW.csv")
+#data <- read.csv("./data/Aphid_data_Wide_RAW.csv")
 
 data2 <- read.csv("./data/Aphid_wide_Allrings_5.9.21.csv")
 
-data3 <- read.csv("./data/aphid_data_long.csv")
+#data3 <- read.csv("./data/aphid_data_long.csv")
 
-data4 <- read.csv("./data/aphid_data_wide.csv")
+#data4 <- read.csv("./data/aphid_data_wide.csv")
 
 
 data2 <- data2[,-c(3,6,8,9)]

@@ -224,6 +224,20 @@ data3 <- read.csv("./data/aphid_data_long.csv")
 data4 <- read.csv("./data/aphid_data_wide.csv")
 
 
+unique_ids <- subset(data2, ringfinal == 4000)
+points(x=unique_ids$Lat,y=unique_ids$Long,col='red',cex=0.75)
+
+base_world <- map_data("world")
+
+map_data <- 
+  base_world +
+  geom_point(data=unique_ids, 
+             aes(x=Long, y=Lat), colour="Deep Pink", 
+             fill="Pink",pch=21, size=5, alpha=I(0.7))
+
+map_data
+
+
 data2 <- data2[,-c(3,6,8,9)]
 
 
@@ -391,13 +405,38 @@ scale_colour_discrete(name="Aphid Types")
 ```
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
+library(ggplot2)
 
-library(maptools
-  AEZ <- readShapePoly('../supplemental_appendix/data/AEZ_basic.shp',
-                          proj4string=CRS
-                          ("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
-  projection = CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+# data_totaph <- aphid_model_data("TotAph")
 
+aez_sites <- read.csv("../supplemental_appendix/data/AEZ_sites.csv")
+# 
+# library(maptools
+#   AEZ <- readShapePoly('../supplemental_appendix/data/AEZ_basic.shp',
+#                           proj4string=CRS
+#                           ("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
+#   projection = CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+
+aez_sites$gridname <- as.factor(aez_sites$gridcode)
+levels(aez_sites$gridname) <- c("Annual Crop", "Crop-Fallow Transition", "Crop-Fallow", "Irrigated")
+
+
+  ggplot(aez_sites, aes(x=gridcode)) + geom_histogram(fill="gray", position="dodge") + theme_classic() + labs(x = "Agroecozone", y = "Number of Aphid Collection Sites") +stat_count(aes(y=..count..,label=..count..),geom="text",hjust=-.1,  vjust=-.50) + ggtitle("Biotic Collection Sites by Agroecological Zone")+ coord_flip()
+  # + scale_x_discrete(labels= aez_sites$gridname)
+  
+  # 
+  # 
+  # +
+  # geom_text(aes(label = Frequency,y=Pos), size = 3) 
+  # 
+  
+  
+  
+  
+  
+  
+  
+  
 
 ```
 
