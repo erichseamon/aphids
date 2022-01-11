@@ -1,5 +1,5 @@
 ---
-title: "Supplemental Appendix in support of PAPER TITLE"
+title: "LOG Supplemental Appendix in support of PAPER TITLE"
 author: "Subodh Adhikari, Sanford Eigenbrode, Erich Seamon"
 date: "10/22/2021"
 fontsize: 12pt
@@ -116,9 +116,9 @@ fits_summary <- NULL
 fmla <- as.formula(paste(colnames(data2[i]), " ~ ", paste(colnames(data2[c(44,45,46,47,48,49,15,3,4)]), collapse= "+")))
 
 #corrplot(cor(data2a[c(20,8,9,10,11,3,4)]), method = "square")
-# 
-# data2[i] <- log10(data2[i])
-# data2 <- data2[!is.infinite(eval(parse(text=paste("data2$", colnames(data2[i]), sep="")))),]
+
+data2[i] <- log10(data2[i])
+data2 <- data2[!is.infinite(eval(parse(text=paste("data2$", colnames(data2[i]), sep="")))),]
 
 inTraining <- createDataPartition(eval(parse(text=paste("data2$", colnames(data2[i]), sep=""))), p = .7, list = FALSE)
 training <- data2[ inTraining,]
