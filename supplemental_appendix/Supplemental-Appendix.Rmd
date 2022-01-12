@@ -408,6 +408,50 @@ scale_colour_discrete(name="Aphid Types")
 ```
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
+
+models <- cbind(model_TotAph$importance,model_TotAphNoMfc$importance,model_RelAbundMfc$importance,model_TotRp$importance,model_TotSa$importance,model_TotMd$importance,model_TotMfc$importance)
+
+colnames(models) <- c("TotAph", "TotAphNoMfc", "RelAbundMfc", "TotRp", "TotSa", "TotMd", "TotMfc")
+rownames(models) <- c("Winter Wheat", "Spring Wheat", "All Wheat", "All Cereals", "All Grasslands", "All Legumes", "LULCeven", "Cumulative Degree Days", "Cumulative Precip" )
+models <- t(models)
+
+models2 <- melt(models)
+models2 <- as.data.frame(models2)
+
+model_aph <- subset(models2, Var1 == "TotAph" | Var1 == "TotAphNoMfc" | Var1 == "RelAbundMfc")
+model_other <- subset(models2, Var1 == "TotSa" | Var1 == "TotMd" | Var1 == "TotMfc" )
+model_other_refined <- subset(model_other, Var2 == "")
+# 
+ # ggplot(model_aph, aes(x = Var2,  y = value, group = Var1, colour = Var1)) +
+ # geom_line(aes(color = Var1)) + theme_bw() +
+ #   theme(axis.text.x = element_text(angle = 90)) + xlab("Cropping systems and Climate") +
+ #   ylab("Feature Importance") +
+ #   ggtitle("Feature Importance Comparison: Total Aphids vs. Mfc") +
+ # scale_colour_discrete(name="Aphid Types")
+
+model_other <- subset(model_other, Var2 == "Cumulative Degree Days" | Var2 == "Cumulative Precip" | Var2 == "All Wheat" | Var2 == "LULCeven")
+model_other$Var2 <- factor(model_other$Var2)
+
+model_other <- model_other[c(10,11,12,7,8,9,4,5,6,1,2,3),]
+model_other <- model_other[order(model_other$Var2), ]
+model_other$Var2 <- factor(model_other$Var2, levels=rev(levels(model_other$Var2)))
+
+
+ggplot(model_other, aes(x = Var2,  y = value, group = Var1, fill = Var1)) +
+    geom_bar(width=0.7,  position=position_dodge(width=0.75), stat="identity") + #geom_line(aes(color = Var1)) + theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) + xlab("Cropping systems and Climate") +
+  ylab("Feature Importance") +
+  ggtitle("Feature Importance Comparison: Other Aphids") +
+scale_colour_discrete(name="Aphid Types")
+
+
+```
+
+
+
+
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
 library(ggplot2)
 
 # data_totaph <- aphid_model_data("TotAph")
