@@ -18,6 +18,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/mnt/ceph/erichs/git/aphids/supplemental_appendix/")  # with something else than `getwd()`
 ```
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
@@ -437,12 +438,15 @@ model_other <- model_other[order(model_other$Var2), ]
 model_other$Var2 <- factor(model_other$Var2, levels=rev(levels(model_other$Var2)))
 
 
-ggplot(model_other, aes(x = Var2,  y = value, group = Var1, fill = Var1)) +
+levels(model_other$Var2) <- c("Cumulative Precipitation","Cumulative Degree Days","Landscape Diversity", "Proportion of Wheat")
+levels(model_other$Var1) <- c("TotAph","TotAphNoMfc","RelAbundMfc", "TotRp", "S. avenae", "M. dirhodum", "M.f. cerealium")
+
+colnames(model_other) <- c("Legend", "Var2", "value")
+ggplot(model_other, aes(x = Var2,  y = value, group = Legend, fill = Legend)) +
     geom_bar(width=0.7,  position=position_dodge(width=0.75), stat="identity") + #geom_line(aes(color = Var1)) + theme_bw() +
-  theme(axis.text.x = element_text(angle = 90)) + xlab("Cropping systems and Climate") +
-  ylab("Feature Importance") +
-  ggtitle("Feature Importance Comparison: Other Aphids") +
-scale_colour_discrete(name="Aphid Types")
+  theme(axis.text.x = element_text(angle = 0)) + xlab("Variables") +
+  ylab("Feature Importance Value") +
+scale_colour_discrete(name="Aphid Types") + theme_minimal()
 
 
 ```
